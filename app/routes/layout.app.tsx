@@ -2,6 +2,11 @@ import { Outlet } from "react-router";
 import type { Route } from "./+types/layout.app";
 import { Sidebar } from "~/components/sidebar";
 import { DevUI } from "~/components/dev-ui";
+// PROTOTYPE (avisos) — throwaway
+import {
+  NoticesPrototype,
+  NoticesPrototypeProvider,
+} from "~/components/prototype-notices";
 import { Toaster } from "sonner";
 import { getCurrentUserId, getDevCountry } from "~/lib/session";
 import { getCountryTierInfo, COUNTRIES } from "~/lib/ppp";
@@ -228,6 +233,7 @@ export default function AppLayout({ loaderData }: Route.ComponentProps) {
   } = loaderData;
 
   return (
+    <NoticesPrototypeProvider>
     <div className="flex h-screen overflow-hidden">
       <Sidebar
         currentUser={currentUser}
@@ -245,6 +251,8 @@ export default function AppLayout({ loaderData }: Route.ComponentProps) {
         countries={countries}
       />
       <Toaster position="bottom-right" richColors closeButton />
+      {currentUser && <NoticesPrototype />}
     </div>
+    </NoticesPrototypeProvider>
   );
 }

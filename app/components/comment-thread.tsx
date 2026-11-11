@@ -225,7 +225,14 @@ function CommentItem({
   }
 
   return (
-    <div className={cn("py-3", isReply && "border-l pl-4")}>
+    <div
+      // PROTOTYPE (avisos): anchor target for notice clicks
+      id={`comment-${comment.id}`}
+      className={cn(
+        "scroll-mt-6 py-3 target:rounded-md target:bg-primary/10 target:ring-2 target:ring-primary/40",
+        isReply && "border-l pl-4"
+      )}
+    >
       <div className="flex items-start gap-3">
         <UserAvatar
           name={comment.author.name}
