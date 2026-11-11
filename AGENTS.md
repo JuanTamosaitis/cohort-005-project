@@ -17,3 +17,11 @@ Do these checks in this order before you report a change to `app/` as complete:
 ### Issue tracker
 
 Issues and PRDs live as GitHub issues on your own copy of this repo (the `origin` remote), never on `ai-hero-dev/cohort-005-project`, managed with the `gh` CLI. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+The five canonical roles, each label string equal to its name (`needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`). See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context: the glossary is `GLOSSARY.md` at the root (used in place of `CONTEXT.md`) plus ADRs in `docs/adr/`. See `docs/agents/domain.md`.
