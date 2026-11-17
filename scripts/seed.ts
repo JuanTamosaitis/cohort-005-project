@@ -72,6 +72,8 @@ async function seed() {
 
   // Drop and recreate tables for a clean seed
   sqlite.exec(`
+    DROP TABLE IF EXISTS bookmarks;
+    DROP TABLE IF EXISTS notes;
     DROP TABLE IF EXISTS comments;
     DROP TABLE IF EXISTS course_ratings;
     DROP TABLE IF EXISTS video_watch_events;
@@ -2818,6 +2820,40 @@ This course is still in draft while the cluster examples are rewritten against t
 
   console.log(`Created ${watchEventRows.length} video watch events.`);
 
+  // ─── Bookmarks and Notes ───
+  // A handful of Students flag and annotate Lessons they have finished, so the
+  // Saved page has something to show.
+
+  const NOTE_BODIES = [
+    "Rewatch the second half before the quiz.",
+    "Key idea: keep the state where it is used.",
+    "Try this on my side project this weekend.",
+  ];
+  const finishedLessons = db
+    .select({
+      userId: schema.lessonProgress.userId,
+      lessonId: schema.lessonProgress.lessonId,
+    })
+    .from(schema.lessonProgress)
+    .where(eq(schema.lessonProgress.status, LessonProgressStatus.Completed))
+    .limit(30)
+    .all();
+
+  finishedLessons.forEach(({ userId, lessonId }, i) => {
+    if (i % 2 === 0) {
+      db.insert(schema.bookmarks).values({ userId, lessonId }).run();
+    }
+    if (i % 3 === 0) {
+      db.insert(schema.notes)
+        .values({ userId, lessonId, body: NOTE_BODIES[i % NOTE_BODIES.length] })
+        .run();
+    }
+  });
+
+  console.log(
+    `Created ${countRows(schema.bookmarks)} bookmarks and ${countRows(schema.notes)} notes.`
+  );
+
   // ─── Summary ───
 
   const sevenDaysAgo = daysAgo(7);
@@ -2847,6 +2883,9 @@ This course is still in draft while the cluster examples are rewritten against t
   console.log(`  Enrollments: ${countRows(schema.enrollments)}`);
   console.log(`  Course ratings: ${countRows(schema.courseRatings)}`);
   console.log(`  Lesson comments: ${countRows(schema.comments)}`);
+  console.log(
+    `  Bookmarks: ${countRows(schema.bookmarks)}, notes: ${countRows(schema.notes)}`
+  );
   console.log(
     `  Lesson progress: ${countRows(schema.lessonProgress)} (${countRows(schema.lessonProgress, eq(schema.lessonProgress.status, LessonProgressStatus.Completed))} completed)`
   );
